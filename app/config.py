@@ -13,14 +13,16 @@ class Settings:
     default_coupon_param: str
 
 
-def load_settings() -> Settings:
-    app_id = os.getenv("NUVEMSHOP_APP_ID", "")
-    client_secret = os.getenv("NUVEMSHOP_CLIENT_SECRET", "")
+def _read_required_env(name: str) -> str:
+    value = os.getenv(name, "").strip()
+    if not value:
+        raise RuntimeError(f"{name} is required")
+    return value
 
-    if not app_id:
-        raise RuntimeError("NUVEMSHOP_APP_ID is required")
-    if not client_secret:
-        raise RuntimeError("NUVEMSHOP_CLIENT_SECRET is required")
+
+def load_settings() -> Settings:
+    app_id = _read_required_env("NUVEMSHOP_APP_ID")
+    client_secret = _read_required_env("NUVEMSHOP_CLIENT_SECRET")
 
     return Settings(
         app_base_url=os.getenv("APP_BASE_URL", "http://localhost:5000").rstrip("/"),
